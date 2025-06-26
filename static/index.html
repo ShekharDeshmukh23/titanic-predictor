@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Titanic Survival Predictor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 350px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.7rem;
+      background-color: #007bff;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 1rem;
+      font-weight: bold;
+      text-align: center;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Titanic Survival Predictor</h2>
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" placeholder="Enter age" required />
+
+    <label for="gender">Gender:</label>
+    <select id="gender">
+      <option value="0">Male</option>
+      <option value="1">Female</option>
+    </select>
+
+    <label for="ticket_class">Ticket Class:</label>
+    <select id="ticket_class">
+      <option value="1">1st Class</option>
+      <option value="2">2nd Class</option>
+      <option value="3">3rd Class</option>
+    </select>
+
+    <button onclick="predictSurvival()">Predict</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    async function predictSurvival() {
+      const age = parseFloat(document.getElementById("age").value);
+      const gender = parseInt(document.getElementById("gender").value);
+      const ticket_class = parseInt(document.getElementById("ticket_class").value);
+      const resultDiv = document.getElementById("result");
+
+      resultDiv.textContent = "Predicting...";
+
+      try {
+        const response = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ age, gender, ticket_class })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.textContent = `Probability: ${data.probability}% — You would ${data.prediction}`;
+        } else {
+          resultDiv.textContent = "Error: " + data.error;
+        }
+      } catch (err) {
+        resultDiv.textContent = "Could not reach the server.";
+      }
+    }
+  </script>
+</body>
+</html>
