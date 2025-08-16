@@ -18,17 +18,19 @@ st.write("Enter passenger details below to check survival probability:")
 
 # Inputs
 age = st.number_input("Age", min_value=0, max_value=100, value=25)
+gender = st.selectbox("Gender", options=["Male", "Female"])
+ticket_class = st.selectbox("Ticket Class", options=["1st Class", "2nd Class", "3rd Class"])
 
-gender_label = st.selectbox("Gender", ["Male", "Female"])
-gender = 1 if gender_label == "Male" else 0
-
-ticket_label = st.selectbox("Ticket Class", ["1st Class", "2nd Class", "3rd Class"])
-ticket_class = {"1st Class": 1, "2nd Class": 2, "3rd Class": 3}[ticket_label]
-
-# Prediction
 if st.button("Predict"):
-    X = np.array([[age, gender, ticket_class]])
+    # Encode categorical features
+    gender_val = 1 if gender == "Male" else 0
+    class_val = {"1st Class": 1, "2nd Class": 2, "3rd Class": 3}[ticket_class]
+
+    # Prepare input
+    X = np.array([[age, gender_val, class_val]])
     X_scaled = scaler.transform(X)
+
+    # Predict
     proba = float(predict_proba(X_scaled, w, b)[0])
 
     st.metric("Survival Probability", f"{proba*100:.2f}%")
