@@ -23,7 +23,7 @@ ticket_class = st.selectbox("Ticket Class", options=["1st Class", "2nd Class", "
 
 if st.button("Predict"):
     # Encode categorical features
-    gender_val = 1 if gender == "Male" else 0
+    gender_val = 0 if gender == "Male" else 1
     class_val = {"1st Class": 1, "2nd Class": 2, "3rd Class": 3}[ticket_class]
 
     # Prepare input
